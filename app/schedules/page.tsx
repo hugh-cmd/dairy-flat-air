@@ -38,7 +38,6 @@ export default function SchedulesPage() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState("");
-
   async function searchSchedules(event: React.FormEvent) {
     event.preventDefault();
 
