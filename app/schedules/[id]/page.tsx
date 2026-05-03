@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type Schedule = {
   _id: string;
@@ -24,7 +24,7 @@ type Schedule = {
 export default function ScheduleDetailsPage() {
   const params = useParams();
   const id = params.id as string;
-
+  const router = useRouter();
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -87,18 +87,7 @@ export default function ScheduleDetailsPage() {
         throw new Error(data.error || "Booking failed");
       }
 
-      setBookingMessage("Booking created successfully.");
-      setBookingReference(data.booking.reference);
-
-      setSchedule({
-        ...schedule,
-        bookedSeats: schedule.bookedSeats + seats,
-        availableSeats: schedule.availableSeats - seats,
-      });
-
-      setPassengerName("");
-      setPassengerEmail("");
-      setSeats(1);
+      router.push(`/bookings/${data.booking.reference}`);
     } catch (err) {
       setBookingError(err instanceof Error ? err.message : "Booking failed");
     } finally {
