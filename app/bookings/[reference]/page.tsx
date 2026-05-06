@@ -117,9 +117,17 @@ export default function BookingInvoicePage() {
     return (
       <main className="min-h-screen bg-slate-100 px-6 py-10">
         <section className="mx-auto max-w-4xl">
-          <a href="/manage" className="text-sm font-semibold text-blue-700">
-            ← Back to manage
-          </a>
+         <nav className="flex flex-wrap gap-4 text-sm font-semibold">
+            <a href="/manage" className="text-blue-700 hover:text-blue-900">
+              ← Manage bookings
+            </a>
+            <a href="/schedules" className="text-blue-700 hover:text-blue-900">
+              Search another flight
+            </a>
+            <a href="/" className="text-blue-700 hover:text-blue-900">
+              Home
+            </a>
+          </nav>
 
           <div className="mt-6 rounded-2xl bg-red-100 p-6 text-red-700">
             {error}
@@ -139,9 +147,17 @@ export default function BookingInvoicePage() {
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <section className="mx-auto max-w-4xl">
-        <a href="/manage" className="text-sm font-semibold text-blue-700">
-          ← Back to manage
+        <nav className="flex flex-wrap gap-4 text-sm font-semibold">
+        <a href="/manage" className="text-blue-700 hover:text-blue-900">
+          ← Manage bookings
         </a>
+        <a href="/schedules" className="text-blue-700 hover:text-blue-900">
+          Search another flight
+        </a>
+        <a href="/" className="text-blue-700 hover:text-blue-900">
+          Home
+        </a>
+      </nav>
 
         <div className="mt-6 rounded-3xl bg-white p-8 shadow">
           <div className="flex flex-col justify-between gap-4 border-b border-slate-200 pb-6 md:flex-row md:items-start">
