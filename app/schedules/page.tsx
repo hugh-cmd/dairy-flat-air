@@ -43,7 +43,12 @@ export default function SchedulesPage() {
   const [error, setError] = useState("");
   async function searchSchedules(event: React.FormEvent) {
     event.preventDefault();
-
+    if (orig === dest) {
+      setSearched(true);
+      setSchedules([]);
+      setError("Origin and destination must be different.");
+      return;
+    }
     setLoading(true);
     setSearched(true);
     setError("");
