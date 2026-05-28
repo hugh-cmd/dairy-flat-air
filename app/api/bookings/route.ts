@@ -125,14 +125,28 @@ export async function POST(request: NextRequest) {
       cancelledAt: null,
     };
 
-    await db.collection<ScheduleDocument>("schedules").updateOne(
-      { _id: new ObjectId(scheduleId) },
+    const updateResult = await db.collection<ScheduleDocument>("schedules").updateOne(
+      {
+        _id: schedule._id,
+        bookings: schedule.bookings,
+      },
       {
         $push: {
           bookings: booking,
         },
       }
     );
+
+    if (updateResult.modifiedCount === 0) {
+      return NextResponse.json(
+        {
+          error:
+            "Flight availability changed while creating the booking. Please try again.",
+        },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json(
       {
         message: "Booking created successfully",
