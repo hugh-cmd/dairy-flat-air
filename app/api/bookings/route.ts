@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
+import { Db, ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
 import { generateBookingReference } from "@/lib/bookingReference";
 
@@ -36,7 +36,30 @@ function getBookedSeats(bookings: Booking[]) {
     .filter((booking) => booking.status === "confirmed")
     .reduce((total, booking) => total + booking.seats, 0);
 }
+async function generateUniqueBookingReference(db: Db) {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const reference = generateBookingReference();
 
+    const existingBooking = await db
+      .collection<ScheduleDocument>("schedules")
+      .findOne(
+        {
+          "bookings.reference": reference,
+        },
+        {
+          projection: {
+            _id: 1,
+          },
+        }
+      );
+
+    if (!existingBooking) {
+      return reference;
+    }
+  }
+
+  throw new Error("Could not generate a unique booking reference");
+}
 export async function POST(request: NextRequest) {
   try {
     const db = await getDb();
@@ -89,7 +112,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const reference = generateBookingReference();
+    const reference = await generateUniqueBookingReference(db);
 
     const booking = {
       reference,
