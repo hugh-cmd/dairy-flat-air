@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const airports = [
@@ -72,9 +73,9 @@ export default function SchedulesPage() {
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <section className="mx-auto max-w-6xl">
-        <a href="/" className="text-sm font-semibold text-blue-700">
-          ← Back to home
-        </a>
+          <Link href="/" className="text-sm font-semibold text-blue-700">
+            ← Back to home
+          </Link>
 
         <div className="mt-6 rounded-3xl bg-white p-8 shadow">
           <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-blue-700">
@@ -238,12 +239,12 @@ export default function SchedulesPage() {
                     ${schedule.price}
                   </p>
 
-                  <a
+                  <Link
                     href={`/schedules/${schedule._id}`}
                     className="mt-4 inline-block rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
                   >
                     Select flight
-                  </a>
+                  </Link>
                 </div>
               </div>
             </article>

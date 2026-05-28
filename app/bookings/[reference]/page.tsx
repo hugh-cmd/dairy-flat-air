@@ -1,8 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-
+import Link from "next/link";
+import { getDb } from "@/lib/mongodb";
+import CancelBookingButton from "@/components/CancelBookingButton";
 type Booking = {
   reference: string;
   passengerName: string;
@@ -10,12 +8,11 @@ type Booking = {
   seats: number;
   status: string;
   totalPrice: number;
-  createdAt: string;
-  cancelledAt: string | null;
+  createdAt: Date;
+  cancelledAt: Date | null;
 };
 
-type Schedule = {
-  _id: string;
+type ScheduleDocument = {
   flightNumber: string;
   origin: string;
   destination: string;
@@ -28,117 +25,84 @@ type Schedule = {
   aircraftName: string;
   capacity: number;
   price: number;
-  bookedSeats: number;
-  availableSeats: number;
+  bookings: Booking[];
 };
 
-type BookingData = {
-  booking: Booking;
-  schedule: Schedule;
+type BookingInvoicePageProps = {
+  params: Promise<{
+    reference: string;
+  }>;
 };
 
-export default function BookingInvoicePage() {
-  const params = useParams();
-  const reference = params.reference as string;
+async function getBookingData(reference: string) {
+  const db = await getDb();
 
-  const [data, setData] = useState<BookingData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [cancelLoading, setCancelLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [cancelMessage, setCancelMessage] = useState("");
+  const schedule = await db.collection<ScheduleDocument>("schedules").findOne({
+    "bookings.reference": reference,
+  });
 
-  async function loadBooking() {
-    try {
-      setError("");
-
-      const response = await fetch(`/api/bookings/${reference}`);
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to load booking");
-      }
-
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+  if (!schedule) {
+    return null;
   }
 
-  async function cancelBooking() {
-    const confirmed = window.confirm(
-      "Are you sure you want to cancel this booking?"
-    );
+  const booking = schedule.bookings.find(
+    (item) => item.reference === reference
+  );
 
-    if (!confirmed) return;
-
-    try {
-      setCancelLoading(true);
-      setCancelMessage("");
-      setError("");
-
-      const response = await fetch(`/api/bookings/${reference}`, {
-        method: "DELETE",
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to cancel booking");
-      }
-
-      setCancelMessage("Booking cancelled successfully.");
-      await loadBooking();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to cancel booking");
-    } finally {
-      setCancelLoading(false);
-    }
+  if (!booking) {
+    return null;
   }
 
-  useEffect(() => {
-    if (reference) {
-      loadBooking();
-    }
-  }, [reference]);
+  return {
+    booking,
+    schedule: {
+      flightNumber: schedule.flightNumber,
+      origin: schedule.origin,
+      destination: schedule.destination,
+      originCity: schedule.originCity,
+      destinationCity: schedule.destinationCity,
+      originAirportName: schedule.originAirportName,
+      destinationAirportName: schedule.destinationAirportName,
+      departureLocal: schedule.departureLocal,
+      arrivalLocal: schedule.arrivalLocal,
+      aircraftName: schedule.aircraftName,
+      capacity: schedule.capacity,
+      price: schedule.price,
+    },
+  };
+}
 
-  if (loading) {
+export default async function BookingInvoicePage({
+  params,
+}: BookingInvoicePageProps) {
+  const { reference } = await params;
+  const data = await getBookingData(reference);
+
+  if (!data) {
     return (
       <main className="min-h-screen bg-slate-100 px-6 py-10">
         <section className="mx-auto max-w-4xl">
-          <p className="text-slate-600">Loading booking...</p>
-        </section>
-      </main>
-    );
-  }
-
-  if (error && !data) {
-    return (
-      <main className="min-h-screen bg-slate-100 px-6 py-10">
-        <section className="mx-auto max-w-4xl">
-         <nav className="flex flex-wrap gap-4 text-sm font-semibold">
-            <a href="/manage" className="text-blue-700 hover:text-blue-900">
+          <nav className="flex flex-wrap gap-4 text-sm font-semibold">
+            <Link href="/manage" className="text-blue-700 hover:text-blue-900">
               ← Manage bookings
-            </a>
-            <a href="/schedules" className="text-blue-700 hover:text-blue-900">
+            </Link>
+            <Link
+              href="/schedules"
+              className="text-blue-700 hover:text-blue-900"
+            >
               Search another flight
-            </a>
-            <a href="/" className="text-blue-700 hover:text-blue-900">
+            </Link>
+            <Link href="/" className="text-blue-700 hover:text-blue-900">
               Home
-            </a>
+            </Link>
           </nav>
 
           <div className="mt-6 rounded-2xl bg-red-100 p-6 text-red-700">
-            {error}
+            Booking not found
           </div>
         </section>
       </main>
     );
-  }
-
-  if (!data) {
-    return null;
   }
 
   const { booking, schedule } = data;
@@ -148,16 +112,16 @@ export default function BookingInvoicePage() {
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <section className="mx-auto max-w-4xl">
         <nav className="flex flex-wrap gap-4 text-sm font-semibold">
-        <a href="/manage" className="text-blue-700 hover:text-blue-900">
-          ← Manage bookings
-        </a>
-        <a href="/schedules" className="text-blue-700 hover:text-blue-900">
-          Search another flight
-        </a>
-        <a href="/" className="text-blue-700 hover:text-blue-900">
-          Home
-        </a>
-      </nav>
+          <Link href="/manage" className="text-blue-700 hover:text-blue-900">
+            ← Manage bookings
+          </Link>
+          <Link href="/schedules" className="text-blue-700 hover:text-blue-900">
+            Search another flight
+          </Link>
+          <Link href="/" className="text-blue-700 hover:text-blue-900">
+            Home
+          </Link>
+        </nav>
 
         <div className="mt-6 rounded-3xl bg-white p-8 shadow">
           <div className="flex flex-col justify-between gap-4 border-b border-slate-200 pb-6 md:flex-row md:items-start">
@@ -185,18 +149,6 @@ export default function BookingInvoicePage() {
               {booking.status.toUpperCase()}
             </div>
           </div>
-
-          {cancelMessage && (
-            <div className="mt-6 rounded-xl bg-green-100 p-4 text-green-800">
-              {cancelMessage}
-            </div>
-          )}
-
-          {error && (
-            <div className="mt-6 rounded-xl bg-red-100 p-4 text-red-700">
-              {error}
-            </div>
-          )}
 
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             <div className="rounded-2xl bg-slate-50 p-5">
@@ -259,15 +211,7 @@ export default function BookingInvoicePage() {
             </div>
           </div>
 
-          {!isCancelled && (
-            <button
-              onClick={cancelBooking}
-              disabled={cancelLoading}
-              className="mt-8 rounded-xl bg-red-600 px-6 py-3 font-semibold text-white shadow hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-            >
-              {cancelLoading ? "Cancelling..." : "Cancel booking"}
-            </button>
-          )}
+            {!isCancelled && <CancelBookingButton reference={booking.reference} />}
 
           {isCancelled && booking.cancelledAt && (
             <p className="mt-6 text-sm text-slate-600">

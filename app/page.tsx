@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-slate-100">
@@ -16,19 +17,19 @@ export default function HomePage() {
         </p>
 
         <div className="flex gap-4">
-          <a
-            href="/schedules"
-            className="rounded-xl bg-blue-700 px-6 py-3 font-semibold text-white shadow hover:bg-blue-800"
-          >
-            Search flights
-          </a>
+        <Link
+          href="/schedules"
+          className="rounded-xl bg-blue-700 px-6 py-3 font-semibold text-white shadow hover:bg-blue-800"
+        >
+          Search flights
+        </Link>
 
-          <a
-            href="/manage"
-            className="rounded-xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 shadow hover:bg-slate-50"
-          >
-            Manage booking
-          </a>
+        <Link
+          href="/manage"
+          className="rounded-xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 shadow hover:bg-slate-50"
+        >
+          Manage booking
+        </Link>
         </div>
       </section>
     </main>

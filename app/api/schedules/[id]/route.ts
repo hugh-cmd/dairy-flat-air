@@ -6,8 +6,13 @@ type Booking = {
   seats: number;
   status: string;
 };
-
-function addSeatInfo(schedule: any) {
+type ScheduleDocument = {
+  _id?: ObjectId;
+  capacity: number;
+  bookings?: Booking[];
+  [key: string]: unknown;
+};
+function addSeatInfo(schedule: ScheduleDocument) {
   const confirmedBookings = (schedule.bookings || []).filter(
     (booking: Booking) => booking.status === "confirmed"
   );
@@ -40,7 +45,7 @@ export async function GET(
 
     const db = await getDb();
 
-    const schedule = await db.collection("schedules").findOne({
+    const schedule = await db.collection<ScheduleDocument>("schedules").findOne({
       _id: new ObjectId(id),
     });
 

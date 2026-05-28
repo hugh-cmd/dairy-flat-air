@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -109,9 +110,9 @@ export default function ScheduleDetailsPage() {
     return (
       <main className="min-h-screen bg-slate-100 px-6 py-10">
         <section className="mx-auto max-w-4xl">
-          <a href="/schedules" className="text-sm font-semibold text-blue-700">
+          <Link href="/schedules" className="text-sm font-semibold text-blue-700">
             ← Back to search
-          </a>
+          </Link>
 
           <div className="mt-6 rounded-2xl bg-red-100 p-6 text-red-700">
             {error || "Schedule not found"}
@@ -124,9 +125,9 @@ export default function ScheduleDetailsPage() {
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <section className="mx-auto max-w-4xl">
-        <a href="/schedules" className="text-sm font-semibold text-blue-700">
+        <Link href="/schedules" className="text-sm font-semibold text-blue-700">
           ← Back to search
-        </a>
+        </Link>
 
         <div className="mt-6 rounded-3xl bg-white p-8 shadow">
           <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-blue-700">

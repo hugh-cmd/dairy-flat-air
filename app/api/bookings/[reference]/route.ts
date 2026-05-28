@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
-
 type Booking = {
   reference: string;
   passengerName: string;
@@ -12,7 +12,24 @@ type Booking = {
   cancelledAt: Date | null;
 };
 
-function addSeatInfo(schedule: any) {
+type ScheduleDocument = {
+  _id: ObjectId;
+  flightNumber: string;
+  origin: string;
+  destination: string;
+  originCity: string;
+  destinationCity: string;
+  originAirportName: string;
+  destinationAirportName: string;
+  departureLocal: string;
+  arrivalLocal: string;
+  aircraftName: string;
+  capacity: number;
+  price: number;
+  bookings: Booking[];
+};
+
+function addSeatInfo(schedule: ScheduleDocument) {
   const confirmedBookings = (schedule.bookings || []).filter(
     (booking: Booking) => booking.status === "confirmed"
   );
@@ -37,7 +54,7 @@ export async function GET(
     const { reference } = await params;
     const db = await getDb();
 
-    const schedule = await db.collection("schedules").findOne({
+    const schedule = await db.collection<ScheduleDocument>("schedules").findOne({
       "bookings.reference": reference,
     });
 
@@ -99,7 +116,7 @@ export async function DELETE(
     const { reference } = await params;
     const db = await getDb();
 
-    const schedule = await db.collection("schedules").findOne({
+    const schedule = await db.collection<ScheduleDocument>("schedules").findOne({
       "bookings.reference": reference,
     });
 
@@ -128,7 +145,7 @@ export async function DELETE(
       );
     }
 
-    await db.collection("schedules").updateOne(
+    await db.collection<ScheduleDocument>("schedules").updateOne(
       {
         _id: schedule._id,
         "bookings.reference": reference,
@@ -138,7 +155,7 @@ export async function DELETE(
           "bookings.$.status": "cancelled",
           "bookings.$.cancelledAt": new Date(),
         },
-      } as any
+      }
     );
 
     return NextResponse.json({

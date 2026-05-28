@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -80,9 +80,9 @@ export default function ManagePage() {
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <section className="mx-auto max-w-6xl">
-        <a href="/" className="text-sm font-semibold text-blue-700">
+        <Link href="/" className="text-sm font-semibold text-blue-700">
           ← Back to home
-        </a>
+       </Link>
 
         <div className="mt-6 rounded-3xl bg-white p-8 shadow">
           <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-blue-700">
@@ -243,12 +243,12 @@ export default function ManagePage() {
                         ${item.booking.totalPrice}
                       </p>
 
-                      <a
+                      <Link
                         href={`/bookings/${item.booking.reference}`}
                         className="mt-4 inline-block rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
                       >
                         View invoice
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </article>

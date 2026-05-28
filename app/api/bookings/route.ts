@@ -13,7 +13,24 @@ type Booking = {
   createdAt: Date;
   cancelledAt: Date | null;
 };
-
+type ScheduleDocument = {
+  _id: ObjectId;
+  flightNumber: string;
+  origin: string;
+  destination: string;
+  originCity: string;
+  destinationCity: string;
+  originAirportName: string;
+  destinationAirportName: string;
+  departureLocal: string;
+  arrivalLocal: string;
+  aircraftName: string;
+  capacity: number;
+  price: number;
+  bookings: Booking[];
+  status: string;
+  createdAt: Date;
+};
 function getBookedSeats(bookings: Booking[]) {
   return bookings
     .filter((booking) => booking.status === "confirmed")
@@ -51,7 +68,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = await db.collection("schedules").findOne({
+    const schedule = await db.collection<ScheduleDocument>("schedules").findOne({
       _id: new ObjectId(scheduleId),
     });
 
@@ -85,15 +102,14 @@ export async function POST(request: NextRequest) {
       cancelledAt: null,
     };
 
-    await db.collection("schedules").updateOne(
-    { _id: new ObjectId(scheduleId) },
-    {
+    await db.collection<ScheduleDocument>("schedules").updateOne(
+      { _id: new ObjectId(scheduleId) },
+      {
         $push: {
-        bookings: booking,
+          bookings: booking,
         },
-    } as any
+      }
     );
-
     return NextResponse.json(
       {
         message: "Booking created successfully",
