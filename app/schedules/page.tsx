@@ -32,6 +32,7 @@ type Schedule = {
   availableSeats: number;
 };
 
+
 export default function SchedulesPage() {
   const [orig, setOrig] = useState("NZNE");
   const [dest, setDest] = useState("YSSY");
