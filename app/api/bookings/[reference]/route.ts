@@ -27,6 +27,8 @@ type ScheduleDocument = {
   capacity: number;
   price: number;
   bookings: Booking[];
+  originTimezone: string;
+  destinationTimezone: string;
 };
 
 function addSeatInfo(schedule: ScheduleDocument) {
@@ -89,6 +91,8 @@ export async function GET(
         destinationCity: scheduleWithSeats.destinationCity,
         originAirportName: scheduleWithSeats.originAirportName,
         destinationAirportName: scheduleWithSeats.destinationAirportName,
+        originTimezone: scheduleWithSeats.originTimezone,
+        destinationTimezone: scheduleWithSeats.destinationTimezone,
         departureLocal: scheduleWithSeats.departureLocal,
         arrivalLocal: scheduleWithSeats.arrivalLocal,
         aircraftName: scheduleWithSeats.aircraftName,

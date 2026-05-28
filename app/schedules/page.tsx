@@ -21,6 +21,8 @@ type Schedule = {
   destinationCity: string;
   originAirportName: string;
   destinationAirportName: string;
+  originTimezone: string;
+  destinationTimezone: string;
   departureLocal: string;
   arrivalLocal: string;
   aircraftName: string;
@@ -216,11 +218,11 @@ export default function SchedulesPage() {
                   <div className="mt-4 grid gap-2 text-sm text-slate-700 md:grid-cols-2">
                     <p>
                       <span className="font-semibold">Depart:</span>{" "}
-                      {schedule.departureLocal}
+                      {schedule.departureLocal} ({schedule.originTimezone})
                     </p>
                     <p>
                       <span className="font-semibold">Arrive:</span>{" "}
-                      {schedule.arrivalLocal}
+                      {schedule.arrivalLocal} ({schedule.destinationTimezone})
                     </p>
                     <p>
                       <span className="font-semibold">Aircraft:</span>{" "}

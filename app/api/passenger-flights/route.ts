@@ -53,6 +53,8 @@ export async function GET(request: NextRequest) {
           destinationCity: schedule.destinationCity,
           originAirportName: schedule.originAirportName,
           destinationAirportName: schedule.destinationAirportName,
+          originTimezone: schedule.originTimezone,
+          destinationTimezone: schedule.destinationTimezone,
           departureLocal: schedule.departureLocal,
           arrivalLocal: schedule.arrivalLocal,
           aircraftName: schedule.aircraftName,
