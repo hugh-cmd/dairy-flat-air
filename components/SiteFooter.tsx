@@ -25,10 +25,6 @@ export default function SiteFooter() {
             </p>
           </div>
         </div>
-
-        <p className="mt-8 text-xs text-slate-500">
-          159.352 Assignment 2 · Online booking system for a fictitious airline
-        </p>
       </div>
     </footer>
   );
